@@ -1,33 +1,33 @@
-<!DOCTYPE html>
+html_content = """<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memory Matrix - Ingeniería Civil (20 Niveles)</title>
+    <title>Memory Matrix - Ingeniería Civil (Edición Solo Imágenes)</title>
 
-    <!-- Cargamos fuentes desde Google Fonts para diseño industrial/técnico -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@600;700&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Tipografías de Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     
-    <!-- Librería externa para lanzar animación de confeti al completar niveles -->
+    <!-- Librería externa para efecto de confeti al ganar -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
         /* ==========================================================================
-           1. VARIABLES CSS GLOBALES (PALETA Y ESTILOS DE INGENIERÍA)
+           1. ESTILOS GLOBALES Y PALETA DE COLORES (CONSTRUCCIÓN / INGENIERÍA CIVIL)
            ========================================================================== */
         :root {
-            --bg-color: #0f172a;            /* Azul noche oscuro */
-            --card-back-bg: #1e293b;        /* Color posterior de las cartas */
-            --safety-orange: #f97316;       /* Naranja industrial */
-            --safety-yellow: #facc15;       /* Amarillo seguridad */
+            --bg-color: #0f172a;            /* Fondo azul oscuro técnico */
+            --card-back-bg: #1e293b;        /* Fondo reverso de tarjetas */
+            --safety-orange: #f97316;       /* Naranja de seguridad industrial */
+            --safety-yellow: #facc15;       /* Amarillo de prevención */
             --steel-blue: #38bdf8;          /* Azul acero para bordes */
+            --danger-red: #ef4444;          /* Rojo para el contador de vidas */
             --card-border: #334155;         /* Borde neutro */
-            --glow-color: rgba(249, 115, 22, 0.4); /* Resplandor naranja */
-            --text-light: #f8fafc;          /* Texto principal */
-            --text-muted: #94a3b8;          /* Texto secundario */
+            --glow-color: rgba(249, 115, 22, 0.4);
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
         }
 
-        /* Estilos base del documento */
         body {
             margin: 0;
             padding: 20px;
@@ -43,13 +43,12 @@
             overflow-x: hidden;
         }
 
-        /* Encabezado del juego */
+        /* Encabezado Principal */
         .header {
             text-align: center;
             margin-bottom: 20px;
         }
 
-        /* Contenedor del ícono principal de la marca */
         .civil-logo-container {
             display: inline-flex;
             align-items: center;
@@ -85,13 +84,13 @@
         }
 
         /* ==========================================================================
-           2. PANTALLA DE INICIO (MENÚ DE BIENVENIDA)
+           2. PANTALLA DE INICIO Y SELECCIÓN DE DIFICULTAD
            ========================================================================== */
         #start-screen {
             background: rgba(30, 41, 59, 0.95);
             border: 2px solid var(--safety-orange);
             border-radius: 20px;
-            padding: 40px 30px;
+            padding: 35px 25px;
             text-align: center;
             max-width: 520px;
             width: 90%;
@@ -102,25 +101,67 @@
         #start-screen h2 {
             color: var(--safety-yellow);
             margin-top: 0;
+            font-size: 1.6rem;
         }
 
-        .instructions {
+        .difficulty-selector {
+            margin: 25px 0;
             text-align: left;
-            margin: 20px 0;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: #cbd5e1;
         }
 
-        .instructions ul {
-            padding-left: 20px;
+        .difficulty-selector label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--steel-blue);
+            font-size: 1.05rem;
         }
 
-        .instructions li {
-            margin-bottom: 8px;
+        /* Rejilla de Botones para Seleccionar Dificultad */
+        .difficulty-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
         }
 
-        /* Botón para arrancar el juego */
+        .diff-btn {
+            background: #1e293b;
+            border: 2px solid var(--card-border);
+            color: var(--text-light);
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .diff-btn small {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .diff-btn:hover {
+            border-color: var(--steel-blue);
+            background: #334155;
+        }
+
+        .diff-btn.selected {
+            background: linear-gradient(135deg, #c2410c, var(--safety-orange));
+            border-color: var(--safety-yellow);
+            color: #ffffff;
+            box-shadow: 0 0 15px var(--glow-color);
+        }
+
+        .diff-btn.selected small {
+            color: #fef08a;
+        }
+
+        /* Botón Iniciar Juego */
         .btn-play {
             background: linear-gradient(135deg, var(--safety-orange), #c2410c);
             color: white;
@@ -134,23 +175,25 @@
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
+            width: 100%;
+            margin-top: 10px;
         }
 
         .btn-play:hover {
-            transform: scale(1.05);
+            transform: scale(1.03);
             box-shadow: 0 0 30px rgba(249, 115, 22, 0.8);
             background: linear-gradient(135deg, #fb923c, var(--safety-orange));
         }
 
         /* ==========================================================================
-           3. PANTALLA DE JUEGO Y BARRA DE ESTADO
+           3. PANEL SUPERIOR Y BARRA DE ESTADO DE JUEGO
            ========================================================================== */
         #game-screen {
-            display: none; /* Se activa mediante JavaScript */
+            display: none; /* Oculto hasta presionar JUGAR AHORA */
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 950px;
+            max-width: 850px;
         }
 
         .game-status-bar {
@@ -166,32 +209,36 @@
             box-sizing: border-box;
         }
 
-        .status-badge {
-            font-size: 1rem;
+        .status-item {
+            font-size: 0.95rem;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .status-badge span {
+        .status-item span {
             color: var(--safety-yellow);
             font-weight: 800;
         }
 
-        /* Badge visual que cambia según la dificultad del nivel */
-        .difficulty-indicator {
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            color: #ffffff;
-            font-weight: bold;
-            text-transform: uppercase;
+        /* Vidas en Pantalla */
+        .lives-container {
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .diff-facil { background-color: #16a34a; border: 1px solid #4ade80; }
-        .diff-medio { background-color: #d97706; border: 1px solid #fde047; }
-        .diff-dificil { background-color: #dc2626; border: 1px solid #fca5a5; }
-        .diff-super { background-color: #7c3aed; border: 1px solid #c084fc; }
+        .life-heart {
+            font-size: 1.2rem;
+            transition: transform 0.2s ease;
+        }
 
-        /* Banner animado para el conteo previo de 5s */
+        .life-heart.lost {
+            filter: grayscale(100%) opacity(0.3);
+        }
+
+        /* Banner de Previsualización (5s) */
         .preview-banner {
             background-color: var(--safety-yellow);
             color: #0f172a;
@@ -211,7 +258,7 @@
         }
 
         /* ==========================================================================
-           4. TABLERO Y DISEÑO 3D DE LAS CARTAS
+           4. TABLERO Y CARTAS SOLO DE IMÁGENES
            ========================================================================== */
         .grid-container {
             display: grid;
@@ -223,12 +270,11 @@
 
         .card {
             background-color: transparent;
-            height: 140px;
+            height: 120px;
             cursor: pointer;
             perspective: 1000px;
         }
 
-        /* Contenedor con efecto 3D flip */
         .card-inner {
             position: relative;
             width: 100%;
@@ -238,7 +284,7 @@
             transform-style: preserve-3d;
         }
 
-        /* Rotación para revelar cara posterior */
+        /* Estado volteado o en preview */
         .card.flipped .card-inner,
         .card.preview .card-inner {
             transform: rotateY(180deg);
@@ -252,15 +298,14 @@
             backface-visibility: hidden;
             border-radius: 12px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 8px;
+            padding: 10px;
             box-sizing: border-box;
             user-select: none;
         }
 
-        /* Reverso (Carta oculta) */
+        /* Reverso (Carta tapada) */
         .card-front {
             background: linear-gradient(145deg, var(--card-back-bg), #0f172a);
             border: 2px solid var(--card-border);
@@ -275,52 +320,22 @@
             opacity: 0.8;
         }
 
-        /* Anverso (Carta volteada) */
+        /* Frente (Carta destapada - SOLO IMAGEN) */
         .card-back {
             background: linear-gradient(145deg, #1e293b, #334155);
             border: 2px solid var(--steel-blue);
-            color: #ffffff;
             transform: rotateY(180deg);
             box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
         }
 
-        /* Título sobre el ícono SVG */
-        .card-title {
-            font-family: 'Roboto Mono', monospace;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--safety-yellow);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            line-height: 1.1;
-            margin-bottom: 4px;
-            word-break: break-word;
-            max-height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .card-back svg {
+            width: 65px;
+            height: 65px;
+            fill: var(--safety-yellow);
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.4));
         }
 
-        /* Contenedor de la imagen vectorial */
-        .card-image-container {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-        }
-
-        .card-image-container svg {
-            width: 55px;
-            height: 55px;
-            fill: var(--text-light);
-        }
-
-        /* Estilo para parejas correctamente emparejadas */
+        /* Pareja Acoincidida */
         .card.matched .card-back {
             background: linear-gradient(145deg, #15803d, #166534);
             border-color: #4ade80;
@@ -328,28 +343,31 @@
             cursor: default;
         }
 
-        .card.matched .card-title {
-            color: #ffffff;
+        /* Error al Fallar */
+        .card.wrong .card-back {
+            background: linear-gradient(145deg, #991b1b, #7f1d1d);
+            border-color: var(--danger-red);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
         }
 
         /* ==========================================================================
-           5. MODAL FLOTANTE DE VICTORIA
+           5. MODAL DE RESULTADOS (VICTORIA Y GAME OVER)
            ========================================================================== */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.85);
+            background: rgba(15, 23, 42, 0.88);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 1000;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(6px);
         }
 
         .modal-content {
             background: var(--card-back-bg);
             border: 2px solid var(--safety-orange);
-            padding: 35px;
+            padding: 35px 25px;
             border-radius: 20px;
             text-align: center;
             max-width: 450px;
@@ -385,7 +403,7 @@
 </head>
 <body>
 
-    <!-- CABECERA PRINCIPAL CON TÍTULO -->
+    <!-- ENCABEZADO PRINCIPAL -->
     <div class="header">
         <div class="civil-logo-container">
             <svg viewBox="0 0 24 24">
@@ -393,49 +411,69 @@
             </svg>
         </div>
         <h1>Civil Memory Matrix</h1>
-        <p class="subtitle">Memoria técnica con 20 niveles de dificultad en Ingeniería Civil</p>
+        <p class="subtitle">Encuentra los pares de imágenes sobre Ingeniería Civil</p>
     </div>
 
-    <!-- PANTALLA INICIAL (INSTRUCCIONES Y INICIO) -->
+    <!-- ==========================================================================
+         PANTALLA DE INICIO (SELECCIÓN DE DIFICULTAD Y BOTÓN JUGAR AHORA)
+         ========================================================================== -->
     <div id="start-screen">
-        <h2>¡Bienvenido Ingeniero/a!</h2>
-        <div class="instructions">
-            <p><strong>Estructura del juego (20 Niveles):</strong></p>
-            <ul>
-                <li>🟢 <strong>Niveles 1 a 5:</strong> FÁCIL (4 parejas)</li>
-                <li>🟡 <strong>Niveles 6 a 10:</strong> MEDIO (6 parejas)</li>
-                <li>🔴 <strong>Niveles 11 a 15:</strong> DIFÍCIL (8 parejas)</li>
-                <li>🟣 <strong>Niveles 16 a 20:</strong> SÚPER DIFÍCIL (10-12 parejas)</li>
-                <li>Cada carta muestra el <strong>nombre del concepto arriba</strong> y su <strong>ilustración SVG abajo</strong>.</li>
-            </ul>
+        <h2>Configura tu Desafío</h2>
+        
+        <div class="difficulty-selector">
+            <label>Elige la dificultad:</label>
+            <div class="difficulty-options">
+                <button class="diff-btn selected" onclick="selectDifficulty('facil', this)">
+                    🟢 FÁCIL
+                    <small>4 parejas (Vidas ∞)</small>
+                </button>
+                <button class="diff-btn" onclick="selectDifficulty('medio', this)">
+                    🟡 MEDIO
+                    <small>6 parejas (Vidas ∞)</small>
+                </button>
+                <button class="diff-btn" onclick="selectDifficulty('dificil', this)">
+                    🟠 DIFÍCIL
+                    <small>8 parejas (❤️ 3 Vidas)</small>
+                </button>
+                <button class="diff-btn" onclick="selectDifficulty('super', this)">
+                    🔴 SÚPER DIFÍCIL
+                    <small>10 parejas (❤️ 3 Vidas)</small>
+                </button>
+            </div>
         </div>
+
+        <!-- BOTÓN PRINCIPAL DE INICIO -->
         <button class="btn-play" onclick="startGame()">▶ JUGAR AHORA</button>
     </div>
 
-    <!-- CONTENEDOR PRINCIPAL DEL JUEGO -->
+    <!-- ==========================================================================
+         PANTALLA DE JUEGO (PANEL + TABLERO)
+         ========================================================================== -->
     <div id="game-screen">
-        <!-- BARRA SUPERIOR CON INFORMACIÓN EN TIEMPO REAL -->
+        <!-- BARRA SUPERIOR DE ESTADO -->
         <div class="game-status-bar">
-            <div class="status-badge">Nivel: <span id="level-num">1</span>/20</div>
-            <div class="difficulty-indicator diff-facil" id="difficulty-text">FÁCIL</div>
-            <div class="status-badge">Intentos: <span id="attempts-num">0</span></div>
+            <div class="status-item">Dificultad: <span id="diff-label">FÁCIL</span></div>
+            <div class="status-item" id="lives-box" style="display: none;">
+                Vidas: <div class="lives-container" id="lives-container"></div>
+            </div>
+            <div class="status-item">Intentos: <span id="attempts-num">0</span></div>
         </div>
 
-        <!-- INDICADOR DE CONTEO REGRESIVO -->
+        <!-- BANNER CUENTA REGRESIVA 5S DE MEMORIZACIÓN -->
         <div class="preview-banner" id="preview-banner">
-            🧠 MEMORIZA LAS CARTAS: <span id="preview-timer">5</span>s
+            🧠 MEMORIZA LAS IMÁGENES: <span id="preview-timer">5</span>s
         </div>
 
-        <!-- REJILLA DONDE SE IMPRIMEN LAS CARTAS DINÁMICAMENTE -->
+        <!-- REJILLA DONDE SE GENERAN LAS CARTAS -->
         <div class="grid-container" id="grid-container"></div>
     </div>
 
-    <!-- VENTANA POPUP / MODAL DE VICTORIA -->
-    <div class="modal-overlay" id="victory-modal">
+    <!-- MODAL DE RESULTADOS -->
+    <div class="modal-overlay" id="result-modal">
         <div class="modal-content">
-            <h2 id="modal-title">¡Nivel Completado! 🎉</h2>
-            <p id="modal-msg">Has demostrado tus competencias técnicas en la obra.</p>
-            <button class="modal-btn" id="modal-btn" onclick="nextLevel()">Siguiente Nivel ➔</button>
+            <h2 id="modal-title">¡Excelente Trabajo! 🎉</h2>
+            <p id="modal-msg">Has completado el plano técnico sin errores graves.</p>
+            <button class="modal-btn" onclick="returnToMenu()">Volver al Menú Principal</button>
         </div>
     </div>
 
@@ -444,220 +482,177 @@
          ========================================================================== -->
     <script>
         /* ==========================================================================
-           1. BANCO DE DATOS CON ICONOS Y NOMBRES
+           1. BANCO DE IMÁGENES SVG DE INGENIERÍA CIVIL
            ========================================================================== */
-        const ITEM_DATABASE = [
-            { id: 1, name: "Casco de Seguridad", icon: `<svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 0-9 9v3h18v-3a9 9 0 0 0-9-9zm-7 14v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2H5z"/></svg>` },
-            { id: 2, name: "Puente Colgante", icon: `<svg viewBox="0 0 24 24"><path d="M2 18h20v2H2vzM4 14l3-6 3 6h4l3-6 3 6h2V8H2v6h2zm3-3.5L5.2 14h3.6L7 10.5zm10 0L15.2 14h3.6L17 10.5z"/></svg>` },
-            { id: 3, name: "Viga I-Beam", icon: `<svg viewBox="0 0 24 24"><path d="M3 4h18v4h-6v8h6v4H3v-4h6V8H3V4z"/></svg>` },
-            { id: 4, name: "Estación Total", icon: `<svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v2H7v2h10V7h-2V5a3 3 0 0 0-3-3zm-1 18l-3 2h2l2-6-3-12h2l2 10 2-10h2l-3 12 2 6h2l-3-2z"/></svg>` },
-            { id: 5, name: "Muro Corrido", icon: `<svg viewBox="0 0 24 24"><path d="M2 18h20v3H2zm2-6h16v4H4zm3-6h10v4H7z"/></svg>` },
-            { id: 6, name: "Zapata Aislada", icon: `<svg viewBox="0 0 24 24"><path d="M10 2h4v10h5v8H5v-8h5V2z"/></svg>` },
-            { id: 7, name: "Represa Hidráulica", icon: `<svg viewBox="0 0 24 24"><path d="M2 4h20v3L18 20H6L2 7V4zm4 5l1.5 9h9L18 9H6z"/></svg>` },
-            { id: 8, name: "Grúa Torre", icon: `<svg viewBox="0 0 24 24"><path d="M10 2h10v2h-8v4h7v2h-7v12h-2V2zm-4 18h2v2H6vz"/></svg>` },
-            { id: 9, name: "Ensayo Compresión", icon: `<svg viewBox="0 0 24 24"><path d="M6 2h12v3H6zm2 5h8v13H8zm2 2v9h4V9z"/></svg>` },
-            { id: 10, name: "Pavimento Asfalto", icon: `<svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zm2 2v12h12V6zm5 2h2v3h-2zm0 5h2v3h-2z"/></svg>` },
-            { id: 11, name: "Curvas de Nivel", icon: `<svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 4l6 12H6l6-12z"/></svg>` },
-            { id: 12, name: "Flujo Tuberías", icon: `<svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>` },
-            { id: 13, name: "Muro Contención", icon: `<svg viewBox="0 0 24 24"><path d="M19 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm-9 2h4v3h-4V6zm-5 0h3v3H5V6zm0 5h4v3H5v-3zm14 7H5v-2h14v2zm0-4h-3v-3h3v3zm0-5h-3V6h3v3z"/></svg>` },
-            { id: 14, name: "Malla Electrosoldada", icon: `<svg viewBox="0 0 24 24"><path d="M2 2h20v20H2V2zm4 4v3h3V6H6zm5 0v3h3V6h-3zm5 0v3h3V6h-3zM6 11v3h3v-3H6zm5 0v3h3v-3h-3zm5 0v3h3v-3h-3zM6 16v3h3v-3H6zm5 0v3h3v-3h-3zm5 0v3h3v-3h-3z"/></svg>` }
+        const CIVIL_ICONS = [
+            { id: 'casco', svg: `<svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 0-9 9v3h18v-3a9 9 0 0 0-9-9zm-7 14v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2H5z"/></svg>` },
+            { id: 'puente', svg: `<svg viewBox="0 0 24 24"><path d="M2 18h20v2H2vzM4 14l3-6 3 6h4l3-6 3 6h2V8H2v6h2zm3-3.5L5.2 14h3.6L7 10.5zm10 0L15.2 14h3.6L17 10.5z"/></svg>` },
+            { id: 'viga', svg: `<svg viewBox="0 0 24 24"><path d="M3 4h18v4h-6v8h6v4H3v-4h6V8H3V4z"/></svg>` },
+            { id: 'estacion', svg: `<svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v2H7v2h10V7h-2V5a3 3 0 0 0-3-3zm-1 18l-3 2h2l2-6-3-12h2l2 10 2-10h2l-3 12 2 6h2l-3-2z"/></svg>` },
+            { id: 'cimentacion', svg: `<svg viewBox="0 0 24 24"><path d="M2 18h20v3H2zm2-6h16v4H4zm3-6h10v4H7z"/></svg>` },
+            { id: 'zapata', svg: `<svg viewBox="0 0 24 24"><path d="M10 2h4v10h5v8H5v-8h5V2z"/></svg>` },
+            { id: 'represa', svg: `<svg viewBox="0 0 24 24"><path d="M2 4h20v3L18 20H6L2 7V4zm4 5l1.5 9h9L18 9H6z"/></svg>` },
+            { id: 'grua', svg: `<svg viewBox="0 0 24 24"><path d="M10 2h10v2h-8v4h7v2h-7v12h-2V2zm-4 18h2v2H6vz"/></svg>` },
+            { id: 'probeta', svg: `<svg viewBox="0 0 24 24"><path d="M6 2h12v3H6zm2 5h8v13H8zm2 2v9h4V9z"/></svg>` },
+            { id: 'muro', svg: `<svg viewBox="0 0 24 24"><path d="M19 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm-9 2h4v3h-4V6zm-5 0h3v3H5V6zm0 5h4v3H5v-3zm14 7H5v-2h14v2zm0-4h-3v-3h3v3zm0-5h-3V6h3v3z"/></svg>` }
         ];
 
-        /* ==========================================================================
-           2. GENERADOR DE NIVELES (FUNCIÓN 1)
-           ========================================================================== */
-        function generate20Levels() {
-            const levels = [];
-            
-            for (let i = 1; i <= 20; i++) {
-                let diffText = "";
-                let diffClass = "";
-                let numPairs = 4;
-                let cols = 4;
+        /* Configuración de dificultades */
+        const CONFIG = {
+            facil:  { pairsCount: 4,  cols: 4, hasLives: false, lives: 0, label: "FÁCIL" },
+            medio:  { pairsCount: 6,  cols: 4, hasLives: false, lives: 0, label: "MEDIO" },
+            dificil:{ pairsCount: 8,  cols: 4, hasLives: true,  lives: 3, label: "DIFÍCIL" },
+            super:  { pairsCount: 10, cols: 5, hasLives: true,  lives: 3, label: "SÚPER DIFÍCIL" }
+        };
 
-                // Reglas de progresión según el número de nivel
-                if (i <= 5) {
-                    diffText = "Fácil";
-                    diffClass = "diff-facil";
-                    numPairs = 3 + Math.floor((i - 1) / 2); // 3 a 5 parejas
-                    cols = 4;
-                } else if (i <= 10) {
-                    diffText = "Medio";
-                    diffClass = "diff-medio";
-                    numPairs = 5 + (i - 6); // 5 a 9 parejas
-                    cols = 4;
-                } else if (i <= 15) {
-                    diffText = "Difícil";
-                    diffClass = "diff-dificil";
-                    numPairs = 8 + (i - 11); // 8 a 12 parejas
-                    cols = 4;
-                } else {
-                    diffText = "Súper Difícil";
-                    diffClass = "diff-super";
-                    numPairs = 10 + (i - 16); // 10 a 14 parejas
-                    cols = 5;
-                }
-
-                // Selección aleatoria de ítems de la base de datos
-                const shuffledDb = [...ITEM_DATABASE].sort(() => 0.5 - Math.random());
-                const selectedItems = [];
-                
-                for (let p = 0; p < numPairs; p++) {
-                    selectedItems.push(shuffledDb[p % shuffledDb.length]);
-                }
-
-                levels.push({
-                    level: i,
-                    difficulty: diffText,
-                    diffClass: diffClass,
-                    cols: cols,
-                    items: selectedItems
-                });
-            }
-
-            return levels;
-        }
-
-        // Guardamos el objeto completo de los 20 niveles
-        const LEVELS = generate20Levels();
-
-        /* ==========================================================================
-           3. VARIABLES GLOBALES DE CONTROL DE ESTADO
-           ========================================================================== */
-        let currentLevelIndex = 0;
+        /* Estado del Juego */
+        let selectedDiffKey = 'facil';
         let attempts = 0;
-        let matchedPairsCount = 0;
+        let livesLeft = 3;
+        let matchedPairs = 0;
         let selectedCards = [];
         let isBoardLocked = true;
-        let previewTimerInterval = null;
+        let previewInterval = null;
 
         /* ==========================================================================
-           4. INICIAR EL JUEGO (FUNCIÓN 2)
+           2. SELECCIÓN DE DIFICULTAD Y EMPIEZO DE JUEGO
            ========================================================================== */
+        function selectDifficulty(key, btnElement) {
+            selectedDiffKey = key;
+            document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('selected'));
+            btnElement.classList.add('selected');
+        }
+
+        // Se ejecuta al hacer clic en JUGAR AHORA
         function startGame() {
             document.getElementById('start-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'flex';
-            currentLevelIndex = 0;
-            loadLevel(currentLevelIndex);
-        }
 
-        /* ==========================================================================
-           5. CARGAR UN NIVEL ESPECÍFICO (FUNCIÓN 3)
-           ========================================================================== */
-        function loadLevel(levelIndex) {
-            const levelData = LEVELS[levelIndex];
+            const currentConfig = CONFIG[selectedDiffKey];
             
-            // Reiniciar contadores del nivel
+            // Inicializar Estado
             attempts = 0;
-            matchedPairsCount = 0;
+            matchedPairs = 0;
             selectedCards = [];
             isBoardLocked = true;
+            livesLeft = currentConfig.lives;
 
-            // Actualización de la barra de estado
-            document.getElementById('level-num').innerText = levelData.level;
-            
-            const diffElem = document.getElementById('difficulty-text');
-            diffElem.innerText = levelData.difficulty;
-            diffElem.className = `difficulty-indicator ${levelData.diffClass}`;
-            
+            // Actualizar interfaz
+            document.getElementById('diff-label').innerText = currentConfig.label;
             document.getElementById('attempts-num').innerText = attempts;
 
-            // Preparar el mazo de cartas y pintarlo
-            const cardsData = generateCardsData(levelData.items);
-            renderGrid(cardsData, levelData.cols);
-
-            // Iniciar conteo previo
-            startPreviewCountdown();
-        }
-
-        /* ==========================================================================
-           6. DUPLICAR Y MEZCLAR CARTAS (FUNCIÓN 4)
-           ========================================================================== */
-        function generateCardsData(items) {
-            let cards = [];
-            
-            items.forEach(item => {
-                // Duplicamos el elemento para crear el par
-                cards.push({ id: item.id, name: item.name, icon: item.icon });
-                cards.push({ id: item.id, name: item.name, icon: item.icon });
-            });
-
-            // Algoritmo Fisher-Yates de mezcla aleatoria
-            for (let i = cards.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [cards[i], cards[j]] = [cards[j], cards[i]];
+            // Configurar Vidas
+            const livesBox = document.getElementById('lives-box');
+            if (currentConfig.hasLives) {
+                livesBox.style.display = 'flex';
+                renderLives();
+            } else {
+                livesBox.style.display = 'none';
             }
 
-            return cards;
+            // Generar y Mezclar Cartas (SÓLO IMÁGENES)
+            const deck = buildDeck(currentConfig.pairsCount);
+            renderGrid(deck, currentConfig.cols);
+
+            // Iniciar memorización previa de 5 segundos
+            startPreviewTimer();
+        }
+
+        /* Renderizar iconos de corazones/vidas */
+        function renderLives() {
+            const container = document.getElementById('lives-container');
+            container.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                const heart = document.createElement('span');
+                heart.classList.add('life-heart');
+                if (i >= livesLeft) heart.classList.add('lost');
+                heart.innerText = '❤️';
+                container.appendChild(heart);
+            }
         }
 
         /* ==========================================================================
-           7. RENDERIZAR REJILLA DE CARTAS EN EL DOM (FUNCIÓN 5)
+           3. MEZCLADO Y RENDERIZADO DEL TABLERO
            ========================================================================== */
-        function renderGrid(cardsData, cols) {
+        function buildDeck(pairsCount) {
+            // Seleccionar N iconos según la dificultad
+            const chosenIcons = CIVIL_ICONS.slice(0, pairsCount);
+            let deck = [];
+
+            // Crear dos cartas idénticas (de imagen) por cada icono
+            chosenIcons.forEach(iconObj => {
+                deck.push({ id: iconObj.id, svg: iconObj.svg });
+                deck.push({ id: iconObj.id, svg: iconObj.svg });
+            });
+
+            // Algoritmo de Mezcla Aleatoria Fisher-Yates
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+
+            return deck;
+        }
+
+        function renderGrid(deck, cols) {
             const gridContainer = document.getElementById('grid-container');
             gridContainer.innerHTML = '';
             gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
 
-            cardsData.forEach((data, index) => {
-                const cardElement = document.createElement('div');
-                cardElement.classList.add('card');
-                cardElement.dataset.id = data.id;
+            deck.forEach((cardData, idx) => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.id = cardData.id;
 
-                // HTML interno con título sobre la ilustración
-                cardElement.innerHTML = `
+                // Las dos cartas son puramente de IMAGEN (sin texto)
+                card.innerHTML = `
                     <div class="card-inner">
                         <div class="card-front">
                             <svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 0-9 9v3h18v-3a9 9 0 0 0-9-9zm-7 14v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2H5z"/></svg>
                         </div>
                         <div class="card-back">
-                            <div class="card-title">${data.name}</div>
-                            <div class="card-image-container">
-                                ${data.icon}
-                            </div>
+                            ${cardData.svg}
                         </div>
                     </div>
                 `;
 
-                // Asignar escuchador de eventos
-                cardElement.addEventListener('click', () => handleCardClick(cardElement));
-                gridContainer.appendChild(cardElement);
+                card.addEventListener('click', () => handleCardClick(card));
+                gridContainer.appendChild(card);
             });
         }
 
         /* ==========================================================================
-           8. MANEJO DE PREVISUALIZACIÓN DE 5 SEGUNDOS (FUNCIÓN 6)
+           4. PREVISUALIZACIÓN DE 5 SEGUNDOS
            ========================================================================== */
-        function startPreviewCountdown() {
+        function startPreviewTimer() {
             const banner = document.getElementById('preview-banner');
             const timerSpan = document.getElementById('preview-timer');
             const allCards = document.querySelectorAll('.card');
 
-            let timeLeft = 5;
-            timerSpan.innerText = timeLeft;
+            let secondsLeft = 5;
+            timerSpan.innerText = secondsLeft;
             banner.style.display = 'block';
 
-            // Revelamos todas las cartas
-            allCards.forEach(card => card.classList.add('preview'));
+            // Voltear todas las cartas
+            allCards.forEach(c => c.classList.add('preview'));
 
-            previewTimerInterval = setInterval(() => {
-                timeLeft--;
-                timerSpan.innerText = timeLeft;
+            previewInterval = setInterval(() => {
+                secondsLeft--;
+                timerSpan.innerText = secondsLeft;
 
-                if (timeLeft <= 0) {
-                    clearInterval(previewTimerInterval);
-                    allCards.forEach(card => card.classList.remove('preview'));
+                if (secondsLeft <= 0) {
+                    clearInterval(previewInterval);
+                    allCards.forEach(c => c.classList.remove('preview'));
                     banner.style.display = 'none';
-                    isBoardLocked = false; // Desbloqueo del tablero
+                    isBoardLocked = false; // El jugador ya puede seleccionar
                 }
             }, 1000);
         }
 
         /* ==========================================================================
-           9. CONTROL DE CLIC EN LAS CARTAS (FUNCIÓN 7)
+           5. LÓGICA DE INTERACCIÓN Y VALIDACIÓN DE VIDAS
            ========================================================================== */
         function handleCardClick(card) {
-            // Validaciones para evitar interacciones no permitidas
             if (isBoardLocked || card.classList.contains('flipped') || card.classList.contains('matched') || card.classList.contains('preview')) {
                 return;
             }
@@ -665,89 +660,84 @@
             card.classList.add('flipped');
             selectedCards.push(card);
 
-            // Al voltear dos cartas, se valida el par
             if (selectedCards.length === 2) {
                 attempts++;
                 document.getElementById('attempts-num').innerText = attempts;
-                checkMatch();
+                evaluateMatch();
             }
         }
 
-        /* ==========================================================================
-           10. COMPROBAR COINCIDENCIA DE PAR (FUNCIÓN 8)
-           ========================================================================== */
-        function checkMatch() {
+        function evaluateMatch() {
             isBoardLocked = true;
             const [card1, card2] = selectedCards;
-
             const isMatch = card1.dataset.id === card2.dataset.id;
 
             if (isMatch) {
-                // Si coinciden
+                // Éxito: Coincidencia
                 card1.classList.add('matched');
                 card2.classList.add('matched');
-                
                 selectedCards = [];
-                matchedPairsCount++;
+                matchedPairs++;
                 isBoardLocked = false;
 
-                const totalPairsInLevel = LEVELS[currentLevelIndex].items.length;
-                if (matchedPairsCount === totalPairsInLevel) {
-                    setTimeout(handleLevelWin, 600);
+                // Verificar si ganó
+                if (matchedPairs === CONFIG[selectedDiffKey].pairsCount) {
+                    setTimeout(() => showEndModal(true), 600);
                 }
             } else {
-                // Si fallan, se ocultan tras 1.2 segundos
+                // Error: No coinciden
+                card1.classList.add('wrong');
+                card2.classList.add('wrong');
+
+                const currentConfig = CONFIG[selectedDiffKey];
+
+                // Descontar vida si la dificultad lo exige
+                if (currentConfig.hasLives) {
+                    livesLeft--;
+                    renderLives();
+                }
+
                 setTimeout(() => {
-                    card1.classList.remove('flipped');
-                    card2.classList.remove('flipped');
+                    card1.classList.remove('flipped', 'wrong');
+                    card2.classList.remove('flipped', 'wrong');
                     selectedCards = [];
-                    isBoardLocked = false;
-                }, 1200);
+
+                    // Comprobar si perdió todas las vidas
+                    if (currentConfig.hasLives && livesLeft <= 0) {
+                        showEndModal(false);
+                    } else {
+                        isBoardLocked = false;
+                    }
+                }, 1100);
             }
         }
 
         /* ==========================================================================
-           11. MANEJO DE NIVEL COMPLETADO (FUNCIÓN 9)
+           6. FIN DE JUEGO (VICTORIA / GAME OVER)
            ========================================================================== */
-        function handleLevelWin() {
-            // Disparar confeti (Librería externa)
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 }
-            });
+        function showEndModal(isWin) {
+            const modal = document.getElementById('result-modal');
+            const title = document.getElementById('modal-title');
+            const msg = document.getElementById('modal-msg');
 
-            const modal = document.getElementById('victory-modal');
-            const modalTitle = document.getElementById('modal-title');
-            const modalMsg = document.getElementById('modal-msg');
-            const modalBtn = document.getElementById('modal-btn');
-
-            if (currentLevelIndex < LEVELS.length - 1) {
-                modalTitle.innerText = `¡Nivel ${LEVELS[currentLevelIndex].level} Completado! 🎉`;
-                modalMsg.innerText = `Completaste la etapa (${LEVELS[currentLevelIndex].difficulty}) en ${attempts} intentos.`;
-                modalBtn.innerText = "Siguiente Nivel ➔";
+            if (isWin) {
+                confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+                title.innerText = "¡OBRA FINALIZADA CON ÉXITO! 🏆";
+                title.style.color = "var(--safety-yellow)";
+                msg.innerText = `Completaste la matriz en ${attempts} intentos en dificultad ${CONFIG[selectedDiffKey].label}.`;
             } else {
-                modalTitle.innerText = "🏆 ¡MAESTRO DE LA INGENIERÍA CIVIL! 🏆";
-                modalMsg.innerText = `¡Has completado exitosamente los 20 NIVELES del juego! Tu memoria técnica es impecable.`;
-                modalBtn.innerText = "🔄 Volver a Empezar";
+                title.innerText = "💥 ¡FALLO ESTRUCTURAL (GAME OVER)!";
+                title.style.color = "var(--danger-red)";
+                msg.innerText = `Has agotado tus 3 vidas en modo ${CONFIG[selectedDiffKey].label}. ¡Revisa los planos e inténtalo de nuevo!`;
             }
 
             modal.style.display = 'flex';
         }
 
-        /* ==========================================================================
-           12. AVANZAR AL SIGUIENTE NIVEL (FUNCIÓN 10)
-           ========================================================================== */
-        function nextLevel() {
-            document.getElementById('victory-modal').style.display = 'none';
-
-            if (currentLevelIndex < LEVELS.length - 1) {
-                currentLevelIndex++;
-                loadLevel(currentLevelIndex);
-            } else {
-                currentLevelIndex = 0;
-                loadLevel(currentLevelIndex);
-            }
+        function returnToMenu() {
+            document.getElementById('result-modal').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('start-screen').style.display = 'block';
         }
     </script>
 </body>
