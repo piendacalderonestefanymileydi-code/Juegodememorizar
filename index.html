@@ -3,31 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Civil Memory Matrix - Edición Ingeniería Civil</title>
+    <title>Memory Matrix - Ingeniería Civil (20 Niveles)</title>
 
-    <!-- Cargamos tipografías personalizadas desde Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500;700&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Cargamos fuentes desde Google Fonts para diseño industrial/técnico -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@600;700&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     
-    <!-- Librería para el efecto de confeti al ganar un nivel o el juego -->
+    <!-- Librería externa para lanzar animación de confeti al completar niveles -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
         /* ==========================================================================
-           1. VARIABLES GLOBALES Y ESTILOS DE DISEÑO (INGENIERÍA CIVIL)
+           1. VARIABLES CSS GLOBALES (PALETA Y ESTILOS DE INGENIERÍA)
            ========================================================================== */
         :root {
-            --bg-color: #0f172a;            /* Fondo azul noche oscuro tipo plano técnico */
-            --card-back-bg: #1e293b;        /* Fondo del reverso de las cartas */
-            --safety-orange: #f97316;       /* Naranja de seguridad e inspección */
-            --safety-yellow: #facc15;       /* Amarillo de maquinaria industrial */
-            --steel-blue: #38bdf8;          /* Azul acero para bordes y acentos */
-            --card-border: #334155;         /* Borde sutil de las cartas */
-            --glow-color: rgba(249, 115, 22, 0.4); /* Resplandor neón naranja */
-            --text-light: #f8fafc;          /* Color de texto claro */
-            --text-muted: #94a3b8;          /* Color de texto secundario */
+            --bg-color: #0f172a;            /* Azul noche oscuro */
+            --card-back-bg: #1e293b;        /* Color posterior de las cartas */
+            --safety-orange: #f97316;       /* Naranja industrial */
+            --safety-yellow: #facc15;       /* Amarillo seguridad */
+            --steel-blue: #38bdf8;          /* Azul acero para bordes */
+            --card-border: #334155;         /* Borde neutro */
+            --glow-color: rgba(249, 115, 22, 0.4); /* Resplandor naranja */
+            --text-light: #f8fafc;          /* Texto principal */
+            --text-muted: #94a3b8;          /* Texto secundario */
         }
 
-        /* Configuración base de la página */
+        /* Estilos base del documento */
         body {
             margin: 0;
             padding: 20px;
@@ -43,12 +43,13 @@
             overflow-x: hidden;
         }
 
-        /* Encabezado e Isotipo con el casco de ingeniería */
+        /* Encabezado del juego */
         .header {
             text-align: center;
             margin-bottom: 20px;
         }
 
+        /* Contenedor del ícono principal de la marca */
         .civil-logo-container {
             display: inline-flex;
             align-items: center;
@@ -84,7 +85,7 @@
         }
 
         /* ==========================================================================
-           2. PANTALLA DE INICIO (BIENVENIDA)
+           2. PANTALLA DE INICIO (MENÚ DE BIENVENIDA)
            ========================================================================== */
         #start-screen {
             background: rgba(30, 41, 59, 0.95);
@@ -92,7 +93,7 @@
             border-radius: 20px;
             padding: 40px 30px;
             text-align: center;
-            max-width: 500px;
+            max-width: 520px;
             width: 90%;
             box-shadow: 0 0 30px rgba(249, 115, 22, 0.2);
             backdrop-filter: blur(10px);
@@ -119,7 +120,7 @@
             margin-bottom: 8px;
         }
 
-        /* Botón de Jugar Principal */
+        /* Botón para arrancar el juego */
         .btn-play {
             background: linear-gradient(135deg, var(--safety-orange), #c2410c);
             color: white;
@@ -142,17 +143,16 @@
         }
 
         /* ==========================================================================
-           3. ÁREA DE JUEGO Y MODO DE PREVIEW / CUENTA REGRESIVA
+           3. PANTALLA DE JUEGO Y BARRA DE ESTADO
            ========================================================================== */
         #game-screen {
-            display: none; /* Se activa con JavaScript al presionar JUGAR AHORA */
+            display: none; /* Se activa mediante JavaScript */
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 900px;
+            max-width: 950px;
         }
 
-        /* Panel Superior con Nivel, Dificultad e Intentos */
         .game-status-bar {
             display: flex;
             justify-content: space-between;
@@ -176,17 +176,22 @@
             font-weight: 800;
         }
 
+        /* Badge visual que cambia según la dificultad del nivel */
         .difficulty-indicator {
-            background-color: #c2410c;
-            padding: 4px 12px;
+            padding: 4px 14px;
             border-radius: 20px;
             font-size: 0.85rem;
             color: #ffffff;
-            border: 1px solid var(--safety-yellow);
             font-weight: bold;
+            text-transform: uppercase;
         }
 
-        /* Cartel con la cuenta regresiva de 5 segundos */
+        .diff-facil { background-color: #16a34a; border: 1px solid #4ade80; }
+        .diff-medio { background-color: #d97706; border: 1px solid #fde047; }
+        .diff-dificil { background-color: #dc2626; border: 1px solid #fca5a5; }
+        .diff-super { background-color: #7c3aed; border: 1px solid #c084fc; }
+
+        /* Banner animado para el conteo previo de 5s */
         .preview-banner {
             background-color: var(--safety-yellow);
             color: #0f172a;
@@ -206,17 +211,16 @@
         }
 
         /* ==========================================================================
-           4. TABLERO Y CARTAS EN 3D
+           4. TABLERO Y DISEÑO 3D DE LAS CARTAS
            ========================================================================== */
         .grid-container {
             display: grid;
             gap: 15px;
             width: 100%;
             justify-content: center;
-            perspective: 1000px; /* Profundidad para la rotación 3D */
+            perspective: 1000px;
         }
 
-        /* Estilos del Contenedor 3D de la Carta */
         .card {
             background-color: transparent;
             height: 140px;
@@ -224,6 +228,7 @@
             perspective: 1000px;
         }
 
+        /* Contenedor con efecto 3D flip */
         .card-inner {
             position: relative;
             width: 100%;
@@ -233,13 +238,12 @@
             transform-style: preserve-3d;
         }
 
-        /* Clases de estado para dar la vuelta a las cartas */
+        /* Rotación para revelar cara posterior */
         .card.flipped .card-inner,
         .card.preview .card-inner {
             transform: rotateY(180deg);
         }
 
-        /* Cara frontal y reverso */
         .card-front, .card-back {
             position: absolute;
             width: 100%;
@@ -256,7 +260,7 @@
             user-select: none;
         }
 
-        /* Reverso de la carta (Oculta el contenido) */
+        /* Reverso (Carta oculta) */
         .card-front {
             background: linear-gradient(145deg, var(--card-back-bg), #0f172a);
             border: 2px solid var(--card-border);
@@ -264,41 +268,44 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
         }
 
-        /* Muestra el casco en el reverso */
         .card-front svg {
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             fill: var(--safety-yellow);
             opacity: 0.8;
         }
 
-        /* Cara principal de la carta (Muestra el Nombre + Imagen) */
+        /* Anverso (Carta volteada) */
         .card-back {
             background: linear-gradient(145deg, #1e293b, #334155);
             border: 2px solid var(--steel-blue);
             color: #ffffff;
             transform: rotateY(180deg);
             box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: space-between;
         }
 
-        /* Título ubicado arriba de la imagen */
+        /* Título sobre el ícono SVG */
         .card-title {
             font-family: 'Roboto Mono', monospace;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: var(--safety-yellow);
             text-transform: uppercase;
+            letter-spacing: 0.5px;
             line-height: 1.1;
             margin-bottom: 4px;
-            height: 28px;
+            word-break: break-word;
+            max-height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
         }
 
-        /* Estilo de la imagen SVG en la carta */
+        /* Contenedor de la imagen vectorial */
         .card-image-container {
             flex-grow: 1;
             display: flex;
@@ -308,12 +315,12 @@
         }
 
         .card-image-container svg {
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 55px;
             fill: var(--text-light);
         }
 
-        /* Carta Acertada */
+        /* Estilo para parejas correctamente emparejadas */
         .card.matched .card-back {
             background: linear-gradient(145deg, #15803d, #166534);
             border-color: #4ade80;
@@ -326,7 +333,7 @@
         }
 
         /* ==========================================================================
-           5. MODAL DE VICTORIA
+           5. MODAL FLOTANTE DE VICTORIA
            ========================================================================== */
         .modal-overlay {
             position: fixed;
@@ -378,7 +385,7 @@
 </head>
 <body>
 
-    <!-- ENCABEZADO CON LOGO Y CASCO DE CONSTRUCCIÓN -->
+    <!-- CABECERA PRINCIPAL CON TÍTULO -->
     <div class="header">
         <div class="civil-logo-container">
             <svg viewBox="0 0 24 24">
@@ -386,178 +393,157 @@
             </svg>
         </div>
         <h1>Civil Memory Matrix</h1>
-        <p class="subtitle">Encuentra las parejas de elementos e imágenes de ingeniería civil</p>
+        <p class="subtitle">Memoria técnica con 20 niveles de dificultad en Ingeniería Civil</p>
     </div>
 
-    <!-- ==========================================================================
-         PANTALLA DE INICIO (Aparece antes de iniciar la partida)
-         ========================================================================== -->
+    <!-- PANTALLA INICIAL (INSTRUCCIONES Y INICIO) -->
     <div id="start-screen">
         <h2>¡Bienvenido Ingeniero/a!</h2>
         <div class="instructions">
-            <p><strong>Reglas del juego:</strong></p>
+            <p><strong>Estructura del juego (20 Niveles):</strong></p>
             <ul>
-                <li>Supera los <strong>5 niveles progresivos</strong> de menor a mayor dificultad.</li>
-                <li>Cada carta contiene el **nombre del elemento en la parte superior** y su **ilustración**.</li>
-                <li>Al iniciar cada nivel, tendrás **5 segundos** para memorizar la ubicación de todas las cartas.</li>
+                <li>🟢 <strong>Niveles 1 a 5:</strong> FÁCIL (4 parejas)</li>
+                <li>🟡 <strong>Niveles 6 a 10:</strong> MEDIO (6 parejas)</li>
+                <li>🔴 <strong>Niveles 11 a 15:</strong> DIFÍCIL (8 parejas)</li>
+                <li>🟣 <strong>Niveles 16 a 20:</strong> SÚPER DIFÍCIL (10-12 parejas)</li>
+                <li>Cada carta muestra el <strong>nombre del concepto arriba</strong> y su <strong>ilustración SVG abajo</strong>.</li>
             </ul>
         </div>
-        <!-- BOTÓN PRINCIPAL PARA COMENZAR EL JUEGO -->
         <button class="btn-play" onclick="startGame()">▶ JUGAR AHORA</button>
     </div>
 
-    <!-- ==========================================================================
-         PANTALLA DE JUEGO (Se muestra tras dar clic en JUGAR AHORA)
-         ========================================================================== -->
+    <!-- CONTENEDOR PRINCIPAL DEL JUEGO -->
     <div id="game-screen">
-        <!-- BARRA SUPERIOR CON INFORMACIÓN -->
+        <!-- BARRA SUPERIOR CON INFORMACIÓN EN TIEMPO REAL -->
         <div class="game-status-bar">
-            <div class="status-badge">Nivel: <span id="level-num">1</span>/5</div>
-            <div class="difficulty-indicator" id="difficulty-text">FÁCIL</div>
+            <div class="status-badge">Nivel: <span id="level-num">1</span>/20</div>
+            <div class="difficulty-indicator diff-facil" id="difficulty-text">FÁCIL</div>
             <div class="status-badge">Intentos: <span id="attempts-num">0</span></div>
         </div>
 
-        <!-- CUENTA REGRESIVA DE 5 SEGUNDOS DE MEMORIZACIÓN -->
+        <!-- INDICADOR DE CONTEO REGRESIVO -->
         <div class="preview-banner" id="preview-banner">
             🧠 MEMORIZA LAS CARTAS: <span id="preview-timer">5</span>s
         </div>
 
-        <!-- REJILLA DONDE SE DIBUJAN LAS CARTAS -->
-        <div class="grid-container" id="grid-container">
-            <!-- Contenido generado dinámicamente con JavaScript -->
-        </div>
+        <!-- REJILLA DONDE SE IMPRIMEN LAS CARTAS DINÁMICAMENTE -->
+        <div class="grid-container" id="grid-container"></div>
     </div>
 
-    <!-- VENTANA POPUP DE NIVEL COMPLETADO / VICTORIA -->
+    <!-- VENTANA POPUP / MODAL DE VICTORIA -->
     <div class="modal-overlay" id="victory-modal">
         <div class="modal-content">
             <h2 id="modal-title">¡Nivel Completado! 🎉</h2>
-            <p id="modal-msg">Has demostrado tus conocimientos en la obra.</p>
+            <p id="modal-msg">Has demostrado tus competencias técnicas en la obra.</p>
             <button class="modal-btn" id="modal-btn" onclick="nextLevel()">Siguiente Nivel ➔</button>
         </div>
     </div>
 
     <!-- ==========================================================================
-         LÓGICA DEL JUEGO EN JAVASCRIPT
+         LÓGICA EN JAVASCRIPT
          ========================================================================== -->
     <script>
         /* ==========================================================================
-           1. COLECCIÓN DE ICONOS VECTORIALES (SVG)
+           1. BANCO DE DATOS CON ICONOS Y NOMBRES
            ========================================================================== */
-        const ICONS = {
-            casco: `<svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 0-9 9v3h18v-3a9 9 0 0 0-9-9zm-7 14v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2H5z"/></svg>`,
-            puente: `<svg viewBox="0 0 24 24"><path d="M2 18h20v2H2vzM4 14l3-6 3 6h4l3-6 3 6h2V8H2v6h2zm3-3.5L5.2 14h3.6L7 10.5zm10 0L15.2 14h3.6L17 10.5z"/></svg>`,
-            viga: `<svg viewBox="0 0 24 24"><path d="M3 4h18v4h-6v8h6v4H3v-4h6V8H3V4z"/></svg>`,
-            estacion: `<svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v2H7v2h10V7h-2V5a3 3 0 0 0-3-3zm-1 18l-3 2h2l2-6-3-12h2l2 10 2-10h2l-3 12 2 6h2l-3-2z"/></svg>`,
-            cimentacion: `<svg viewBox="0 0 24 24"><path d="M2 18h20v3H2zm2-6h16v4H4zm3-6h10v4H7z"/></svg>`,
-            zapata: `<svg viewBox="0 0 24 24"><path d="M10 2h4v10h5v8H5v-8h5V2z"/></svg>`,
-            represa: `<svg viewBox="0 0 24 24"><path d="M2 4h20v3L18 20H6L2 7V4zm4 5l1.5 9h9L18 9H6z"/></svg>`,
-            grua: `<svg viewBox="0 0 24 24"><path d="M10 2h10v2h-8v4h7v2h-7v12h-2V2zm-4 18h2v2H6vz"/></svg>`,
-            ensayo: `<svg viewBox="0 0 24 24"><path d="M6 2h12v3H6zm2 5h8v13H8zm2 2v9h4V9z"/></svg>`,
-            asfalto: `<svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zm2 2v12h12V6zm5 2h2v3h-2zm0 5h2v3h-2z"/></svg>`,
-            topografia: `<svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 4l6 12H6l6-12z"/></svg>`,
-            hidraulica: `<svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>`,
-            muro: `<svg viewBox="0 0 24 24"><path d="M19 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm-9 2h4v3h-4V6zm-5 0h3v3H5V6zm0 5h4v3H5v-3zm14 7H5v-2h14v2zm0-4h-3v-3h3v3zm0-5h-3V6h3v3z"/></svg>`,
-            malla: `<svg viewBox="0 0 24 24"><path d="M2 2h20v20H2V2zm4 4v3h3V6H6zm5 0v3h3V6h-3zm5 0v3h3V6h-3zM6 11v3h3v-3H6zm5 0v3h3v-3h-3zm5 0v3h3v-3h-3zM6 16v3h3v-3H6zm5 0v3h3v-3h-3zm5 0v3h3v-3h-3z"/></svg>`
-        };
-
-        /* ==========================================================================
-           2. BASE DE DATOS DE NIVELES Y CONCEPTOS CON NOMBRE Y DIFICULTAD
-           ========================================================================== */
-        const LEVELS = [
-            {
-                level: 1,
-                difficulty: "Fácil",
-                cols: 4,
-                pairs: [
-                    { id: 1, name: "Casco de Seguridad", iconKey: "casco" },
-                    { id: 2, name: "Puente Colgante", iconKey: "puente" },
-                    { id: 3, name: "Viga en I (I-Beam)", iconKey: "viga" },
-                    { id: 4, name: "Estación Total", iconKey: "estacion" }
-                ]
-            },
-            {
-                level: 2,
-                difficulty: "Fácil",
-                cols: 4,
-                pairs: [
-                    { id: 5, name: "Cimentación", iconKey: "cimentacion" },
-                    { id: 6, name: "Zapata Aislada", iconKey: "zapata" },
-                    { id: 7, name: "Represa Hidráulica", iconKey: "represa" },
-                    { id: 8, name: "Grúa Torre", iconKey: "grua" }
-                ]
-            },
-            {
-                level: 3,
-                difficulty: "Difícil",
-                cols: 4,
-                pairs: [
-                    { id: 9, name: "Ensayo Probeta", iconKey: "ensayo" },
-                    { id: 10, name: "Pavimento Asfalto", iconKey: "asfalto" },
-                    { id: 11, name: "Curvas de Nivel", iconKey: "topografia" },
-                    { id: 12, name: "Flujo Hidráulico", iconKey: "hidraulica" },
-                    { id: 1, name: "Casco de Seguridad", iconKey: "casco" },
-                    { id: 3, name: "Viga en I (I-Beam)", iconKey: "viga" }
-                ]
-            },
-            {
-                level: 4,
-                difficulty: "Difícil",
-                cols: 4,
-                pairs: [
-                    { id: 13, name: "Muro Contención", iconKey: "muro" },
-                    { id: 14, name: "Electromalla", iconKey: "malla" },
-                    { id: 5, name: "Cimentación", iconKey: "cimentacion" },
-                    { id: 6, name: "Zapata Aislada", iconKey: "zapata" },
-                    { id: 7, name: "Represa Hidráulica", iconKey: "represa" },
-                    { id: 8, name: "Grúa Torre", iconKey: "grua" }
-                ]
-            },
-            {
-                level: 5,
-                difficulty: "Súper Difícil",
-                cols: 4,
-                pairs: [
-                    { id: 1, name: "Casco de Seguridad", iconKey: "casco" },
-                    { id: 2, name: "Puente Colgante", iconKey: "puente" },
-                    { id: 3, name: "Viga en I (I-Beam)", iconKey: "viga" },
-                    { id: 4, name: "Estación Total", iconKey: "estacion" },
-                    { id: 9, name: "Ensayo Probeta", iconKey: "ensayo" },
-                    { id: 10, name: "Pavimento Asfalto", iconKey: "asfalto" },
-                    { id: 13, name: "Muro Contención", iconKey: "muro" },
-                    { id: 14, name: "Electromalla", iconKey: "malla" }
-                ]
-            }
+        const ITEM_DATABASE = [
+            { id: 1, name: "Casco de Seguridad", icon: `<svg viewBox="0 0 24 24"><path d="M12 2a9 9 0 0 0-9 9v3h18v-3a9 9 0 0 0-9-9zm-7 14v2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2H5z"/></svg>` },
+            { id: 2, name: "Puente Colgante", icon: `<svg viewBox="0 0 24 24"><path d="M2 18h20v2H2vzM4 14l3-6 3 6h4l3-6 3 6h2V8H2v6h2zm3-3.5L5.2 14h3.6L7 10.5zm10 0L15.2 14h3.6L17 10.5z"/></svg>` },
+            { id: 3, name: "Viga I-Beam", icon: `<svg viewBox="0 0 24 24"><path d="M3 4h18v4h-6v8h6v4H3v-4h6V8H3V4z"/></svg>` },
+            { id: 4, name: "Estación Total", icon: `<svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v2H7v2h10V7h-2V5a3 3 0 0 0-3-3zm-1 18l-3 2h2l2-6-3-12h2l2 10 2-10h2l-3 12 2 6h2l-3-2z"/></svg>` },
+            { id: 5, name: "Muro Corrido", icon: `<svg viewBox="0 0 24 24"><path d="M2 18h20v3H2zm2-6h16v4H4zm3-6h10v4H7z"/></svg>` },
+            { id: 6, name: "Zapata Aislada", icon: `<svg viewBox="0 0 24 24"><path d="M10 2h4v10h5v8H5v-8h5V2z"/></svg>` },
+            { id: 7, name: "Represa Hidráulica", icon: `<svg viewBox="0 0 24 24"><path d="M2 4h20v3L18 20H6L2 7V4zm4 5l1.5 9h9L18 9H6z"/></svg>` },
+            { id: 8, name: "Grúa Torre", icon: `<svg viewBox="0 0 24 24"><path d="M10 2h10v2h-8v4h7v2h-7v12h-2V2zm-4 18h2v2H6vz"/></svg>` },
+            { id: 9, name: "Ensayo Compresión", icon: `<svg viewBox="0 0 24 24"><path d="M6 2h12v3H6zm2 5h8v13H8zm2 2v9h4V9z"/></svg>` },
+            { id: 10, name: "Pavimento Asfalto", icon: `<svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zm2 2v12h12V6zm5 2h2v3h-2zm0 5h2v3h-2z"/></svg>` },
+            { id: 11, name: "Curvas de Nivel", icon: `<svg viewBox="0 0 24 24"><path d="M12 2L2 22h20L12 2zm0 4l6 12H6l6-12z"/></svg>` },
+            { id: 12, name: "Flujo Tuberías", icon: `<svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>` },
+            { id: 13, name: "Muro Contención", icon: `<svg viewBox="0 0 24 24"><path d="M19 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm-9 2h4v3h-4V6zm-5 0h3v3H5V6zm0 5h4v3H5v-3zm14 7H5v-2h14v2zm0-4h-3v-3h3v3zm0-5h-3V6h3v3z"/></svg>` },
+            { id: 14, name: "Malla Electrosoldada", icon: `<svg viewBox="0 0 24 24"><path d="M2 2h20v20H2V2zm4 4v3h3V6H6zm5 0v3h3V6h-3zm5 0v3h3V6h-3zM6 11v3h3v-3H6zm5 0v3h3v-3h-3zm5 0v3h3v-3h-3zM6 16v3h3v-3H6zm5 0v3h3v-3h-3zm5 0v3h3v-3h-3z"/></svg>` }
         ];
 
         /* ==========================================================================
-           3. ESTADO GLOBAL Y VARIABLES DE CONTROL
+           2. GENERADOR DE NIVELES (FUNCIÓN 1)
            ========================================================================== */
-        let currentLevelIndex = 0;   // Índice del nivel en ejecución
-        let attempts = 0;            // Contador de intentos
-        let matchedPairsCount = 0;   // Parejas acertadas
-        let selectedCards = [];       // Cartas seleccionadas en el turno
-        let isBoardLocked = true;    // Bloquea el tablero durante la vista previa/animación
-        let previewTimerInterval = null; // Guardar referencia de intervalo
+        function generate20Levels() {
+            const levels = [];
+            
+            for (let i = 1; i <= 20; i++) {
+                let diffText = "";
+                let diffClass = "";
+                let numPairs = 4;
+                let cols = 4;
+
+                // Reglas de progresión según el número de nivel
+                if (i <= 5) {
+                    diffText = "Fácil";
+                    diffClass = "diff-facil";
+                    numPairs = 3 + Math.floor((i - 1) / 2); // 3 a 5 parejas
+                    cols = 4;
+                } else if (i <= 10) {
+                    diffText = "Medio";
+                    diffClass = "diff-medio";
+                    numPairs = 5 + (i - 6); // 5 a 9 parejas
+                    cols = 4;
+                } else if (i <= 15) {
+                    diffText = "Difícil";
+                    diffClass = "diff-dificil";
+                    numPairs = 8 + (i - 11); // 8 a 12 parejas
+                    cols = 4;
+                } else {
+                    diffText = "Súper Difícil";
+                    diffClass = "diff-super";
+                    numPairs = 10 + (i - 16); // 10 a 14 parejas
+                    cols = 5;
+                }
+
+                // Selección aleatoria de ítems de la base de datos
+                const shuffledDb = [...ITEM_DATABASE].sort(() => 0.5 - Math.random());
+                const selectedItems = [];
+                
+                for (let p = 0; p < numPairs; p++) {
+                    selectedItems.push(shuffledDb[p % shuffledDb.length]);
+                }
+
+                levels.push({
+                    level: i,
+                    difficulty: diffText,
+                    diffClass: diffClass,
+                    cols: cols,
+                    items: selectedItems
+                });
+            }
+
+            return levels;
+        }
+
+        // Guardamos el objeto completo de los 20 niveles
+        const LEVELS = generate20Levels();
 
         /* ==========================================================================
-           4. INICIALIZACIÓN Y FLUJO DE PANTALLAS
+           3. VARIABLES GLOBALES DE CONTROL DE ESTADO
            ========================================================================== */
+        let currentLevelIndex = 0;
+        let attempts = 0;
+        let matchedPairsCount = 0;
+        let selectedCards = [];
+        let isBoardLocked = true;
+        let previewTimerInterval = null;
 
-        // Función disparada por el botón 'JUGAR AHORA'
+        /* ==========================================================================
+           4. INICIAR EL JUEGO (FUNCIÓN 2)
+           ========================================================================== */
         function startGame() {
-            // Ocultar pantalla de bienvenida
             document.getElementById('start-screen').style.display = 'none';
-            
-            // Mostrar pantalla de juego
             document.getElementById('game-screen').style.display = 'flex';
-
-            // Iniciar Nivel 1
             currentLevelIndex = 0;
             loadLevel(currentLevelIndex);
         }
 
-        // Carga y prepara el tablero para un nivel
+        /* ==========================================================================
+           5. CARGAR UN NIVEL ESPECÍFICO (FUNCIÓN 3)
+           ========================================================================== */
         function loadLevel(levelIndex) {
             const levelData = LEVELS[levelIndex];
             
@@ -567,39 +553,36 @@
             selectedCards = [];
             isBoardLocked = true;
 
-            // Actualizar interfaz (UI)
+            // Actualización de la barra de estado
             document.getElementById('level-num').innerText = levelData.level;
-            document.getElementById('difficulty-text').innerText = levelData.difficulty.toUpperCase();
+            
+            const diffElem = document.getElementById('difficulty-text');
+            diffElem.innerText = levelData.difficulty;
+            diffElem.className = `difficulty-indicator ${levelData.diffClass}`;
+            
             document.getElementById('attempts-num').innerText = attempts;
 
-            // Generar y duplicar cartas para formar las parejas
-            const cardsData = generateCardsData(levelData.pairs);
-            
-            // Dibujar la rejilla
+            // Preparar el mazo de cartas y pintarlo
+            const cardsData = generateCardsData(levelData.items);
             renderGrid(cardsData, levelData.cols);
 
-            // Iniciar memorización previa de 5 segundos
+            // Iniciar conteo previo
             startPreviewCountdown();
         }
 
         /* ==========================================================================
-           5. GENERACIÓN Y MEZCLADO ALEATORIO
+           6. DUPLICAR Y MEZCLAR CARTAS (FUNCIÓN 4)
            ========================================================================== */
-        function generateCardsData(pairs) {
+        function generateCardsData(items) {
             let cards = [];
             
-            // Duplica cada elemento para crear el par perfecto con Título e Imagen
-            pairs.forEach(pair => {
-                const cardObj = {
-                    id: pair.id,
-                    name: pair.name,
-                    svg: ICONS[pair.iconKey]
-                };
-                cards.push(cardObj);
-                cards.push({ ...cardObj }); // Copia idéntica para la pareja
+            items.forEach(item => {
+                // Duplicamos el elemento para crear el par
+                cards.push({ id: item.id, name: item.name, icon: item.icon });
+                cards.push({ id: item.id, name: item.name, icon: item.icon });
             });
 
-            // Algoritmo Fisher-Yates para barajar las cartas
+            // Algoritmo Fisher-Yates de mezcla aleatoria
             for (let i = cards.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [cards[i], cards[j]] = [cards[j], cards[i]];
@@ -608,21 +591,20 @@
             return cards;
         }
 
-        // Renderiza el HTML de las cartas en la cuadrícula
+        /* ==========================================================================
+           7. RENDERIZAR REJILLA DE CARTAS EN EL DOM (FUNCIÓN 5)
+           ========================================================================== */
         function renderGrid(cardsData, cols) {
             const gridContainer = document.getElementById('grid-container');
-            gridContainer.innerHTML = ''; // Limpia el tablero anterior
-
-            // Configurar columnas según el nivel
+            gridContainer.innerHTML = '';
             gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
 
             cardsData.forEach((data, index) => {
                 const cardElement = document.createElement('div');
                 cardElement.classList.add('card');
                 cardElement.dataset.id = data.id;
-                cardElement.dataset.index = index;
 
-                // Estructura interna con Título arriba de la imagen
+                // HTML interno con título sobre la ilustración
                 cardElement.innerHTML = `
                     <div class="card-inner">
                         <div class="card-front">
@@ -631,20 +613,20 @@
                         <div class="card-back">
                             <div class="card-title">${data.name}</div>
                             <div class="card-image-container">
-                                ${data.svg}
+                                ${data.icon}
                             </div>
                         </div>
                     </div>
                 `;
 
-                // Agregar evento de clic a cada carta
+                // Asignar escuchador de eventos
                 cardElement.addEventListener('click', () => handleCardClick(cardElement));
                 gridContainer.appendChild(cardElement);
             });
         }
 
         /* ==========================================================================
-           6. CUENTA REGRESIVA DE MEMORIZACIÓN (5 SEGUNDOS)
+           8. MANEJO DE PREVISUALIZACIÓN DE 5 SEGUNDOS (FUNCIÓN 6)
            ========================================================================== */
         function startPreviewCountdown() {
             const banner = document.getElementById('preview-banner');
@@ -655,40 +637,35 @@
             timerSpan.innerText = timeLeft;
             banner.style.display = 'block';
 
-            // Volteo temporal de todas las cartas
+            // Revelamos todas las cartas
             allCards.forEach(card => card.classList.add('preview'));
 
-            // Disminuye el tiempo cada segundo
             previewTimerInterval = setInterval(() => {
                 timeLeft--;
                 timerSpan.innerText = timeLeft;
 
                 if (timeLeft <= 0) {
                     clearInterval(previewTimerInterval);
-                    
-                    // Oculta todas las cartas nuevamente
                     allCards.forEach(card => card.classList.remove('preview'));
-                    
                     banner.style.display = 'none';
-                    isBoardLocked = false; // Desbloquea para que el jugador empiece
+                    isBoardLocked = false; // Desbloqueo del tablero
                 }
             }, 1000);
         }
 
         /* ==========================================================================
-           7. LÓGICA DE INTERACCIÓN Y COINCIDENCIA DE CARTAS
+           9. CONTROL DE CLIC EN LAS CARTAS (FUNCIÓN 7)
            ========================================================================== */
         function handleCardClick(card) {
-            // Evita clicks inválidos o interrupciones durante animaciones
+            // Validaciones para evitar interacciones no permitidas
             if (isBoardLocked || card.classList.contains('flipped') || card.classList.contains('matched') || card.classList.contains('preview')) {
                 return;
             }
 
-            // Girar carta
             card.classList.add('flipped');
             selectedCards.push(card);
 
-            // Verificar cuando se voltean 2 cartas
+            // Al voltear dos cartas, se valida el par
             if (selectedCards.length === 2) {
                 attempts++;
                 document.getElementById('attempts-num').innerText = attempts;
@@ -696,7 +673,9 @@
             }
         }
 
-        // Valida si las dos cartas volteadas son iguales
+        /* ==========================================================================
+           10. COMPROBAR COINCIDENCIA DE PAR (FUNCIÓN 8)
+           ========================================================================== */
         function checkMatch() {
             isBoardLocked = true;
             const [card1, card2] = selectedCards;
@@ -704,7 +683,7 @@
             const isMatch = card1.dataset.id === card2.dataset.id;
 
             if (isMatch) {
-                // Pareja correcta
+                // Si coinciden
                 card1.classList.add('matched');
                 card2.classList.add('matched');
                 
@@ -712,13 +691,12 @@
                 matchedPairsCount++;
                 isBoardLocked = false;
 
-                // Verificar si se completó el nivel
-                const totalPairsInLevel = LEVELS[currentLevelIndex].pairs.length;
+                const totalPairsInLevel = LEVELS[currentLevelIndex].items.length;
                 if (matchedPairsCount === totalPairsInLevel) {
                     setTimeout(handleLevelWin, 600);
                 }
             } else {
-                // Pareja incorrecta: Espera 1.2s y oculta de nuevo
+                // Si fallan, se ocultan tras 1.2 segundos
                 setTimeout(() => {
                     card1.classList.remove('flipped');
                     card2.classList.remove('flipped');
@@ -729,10 +707,10 @@
         }
 
         /* ==========================================================================
-           8. MODAL DE VICTORIA Y TRANSICIÓN DE NIVELES
+           11. MANEJO DE NIVEL COMPLETADO (FUNCIÓN 9)
            ========================================================================== */
         function handleLevelWin() {
-            // Lanzar animación de confeti
+            // Disparar confeti (Librería externa)
             confetti({
                 particleCount: 100,
                 spread: 70,
@@ -745,21 +723,21 @@
             const modalBtn = document.getElementById('modal-btn');
 
             if (currentLevelIndex < LEVELS.length - 1) {
-                // Avanzar al siguiente nivel
                 modalTitle.innerText = `¡Nivel ${LEVELS[currentLevelIndex].level} Completado! 🎉`;
-                modalMsg.innerText = `Completaste esta etapa en ${attempts} intentos. ¡Avanza a la siguiente fase de la obra!`;
+                modalMsg.innerText = `Completaste la etapa (${LEVELS[currentLevelIndex].difficulty}) en ${attempts} intentos.`;
                 modalBtn.innerText = "Siguiente Nivel ➔";
             } else {
-                // Finalizó los 5 niveles
-                modalTitle.innerText = "🏆 ¡INGENIERO DIRECTOR DE OBRA! 🏆";
-                modalMsg.innerText = `Completaste exitosamente los 5 niveles del juego con un desempeño técnico excelente.`;
-                modalBtn.innerText = "🔄 Reiniciar Juego";
+                modalTitle.innerText = "🏆 ¡MAESTRO DE LA INGENIERÍA CIVIL! 🏆";
+                modalMsg.innerText = `¡Has completado exitosamente los 20 NIVELES del juego! Tu memoria técnica es impecable.`;
+                modalBtn.innerText = "🔄 Volver a Empezar";
             }
 
             modal.style.display = 'flex';
         }
 
-        // Carga el siguiente nivel al hacer clic en el botón del modal
+        /* ==========================================================================
+           12. AVANZAR AL SIGUIENTE NIVEL (FUNCIÓN 10)
+           ========================================================================== */
         function nextLevel() {
             document.getElementById('victory-modal').style.display = 'none';
 
@@ -767,7 +745,6 @@
                 currentLevelIndex++;
                 loadLevel(currentLevelIndex);
             } else {
-                // Reinicia al nivel 1 al finalizar todo el juego
                 currentLevelIndex = 0;
                 loadLevel(currentLevelIndex);
             }
